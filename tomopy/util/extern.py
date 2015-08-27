@@ -79,7 +79,10 @@ __all__ = ['c_shared_lib',
            'c_ospml_quad',
            'c_pml_hybrid',
            'c_pml_quad',
-           'c_sirt']
+           'c_sirt',
+           'c_trace_sirt',
+           'c_trace_mlem',
+           'c_trace_pml']
 
 
 def c_shared_lib(lib_name):
@@ -97,10 +100,12 @@ def c_shared_lib(lib_name):
                 '..', '..', 'lib', lib_name + ext))
         return ctypes.CDLL(libpath)
     except OSError as e:
-        logger.warning('OSError: Shared library missing.')
+        logger.warning('OSError: Shared library missing: ' %e)
 
 
 LIB_TOMOPY = c_shared_lib('libtomopy')
+LIB_TRACE = c_shared_lib('libtracetomo')
+trace_num_threads = np.intc(16)
 
 
 def c_normalize_bg(dx, dy, dz, air, istart, iend):
@@ -381,3 +386,67 @@ def c_sirt(*args):
         dtype.as_c_int(args[5]['num_iter']),
         dtype.as_c_int(args[6]),  # istart
         dtype.as_c_int(args[7]))  # iend
+
+def c_trace_sirt(*args):
+    tomo = mproc.SHARED_TOMO
+    recon = mproc.SHARED_ARRAY
+
+    #LIB_TRACE.c_sirt_helper.restype = ctypes.c_int()
+    LIB_TRACE.c_sirt_helper(
+        dtype.as_c_float_p(tomo),
+        dtype.as_c_int(args[0]),  # dx
+        dtype.as_c_int(args[1]),  # dy
+        dtype.as_c_int(args[2]),  # dz
+        dtype.as_c_float_p(args[3]),  # center
+        dtype.as_c_float_p(args[4]),  # theta
+        dtype.as_c_float_p(recon),
+        dtype.as_c_int(args[5]['num_gridx']),
+        dtype.as_c_int(args[5]['num_gridy']),
+        dtype.as_c_int(args[5]['num_iter']),
+        dtype.as_c_int(args[6]),  # istart
+        dtype.as_c_int(args[7]),  # iend
+        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads
+
+def c_trace_mlem(*args):
+    tomo = mproc.SHARED_TOMO
+    recon = mproc.SHARED_ARRAY
+
+    #LIB_TRACE.c_sirt_helper.restype = ctypes.c_int()
+    print("mlem")
+    LIB_TRACE.c_mlem_helper(
+        dtype.as_c_float_p(tomo),
+        dtype.as_c_int(args[0]),  # dx
+        dtype.as_c_int(args[1]),  # dy
+        dtype.as_c_int(args[2]),  # dz
+        dtype.as_c_float_p(args[3]),  # center
+        dtype.as_c_float_p(args[4]),  # theta
+        dtype.as_c_float_p(recon),
+        dtype.as_c_int(args[5]['num_gridx']),
+        dtype.as_c_int(args[5]['num_gridy']),
+        dtype.as_c_int(args[5]['num_iter']),
+        dtype.as_c_int(args[6]),  # istart
+        dtype.as_c_int(args[7]),  # iend
+        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads
+
+def c_trace_pml(*args):
+    tomo = mproc.SHARED_TOMO
+    recon = mproc.SHARED_ARRAY
+
+    #LIB_TRACE.c_sirt_helper.restype = ctypes.c_int()
+    print("pml")
+    beta = np.float32(10.)
+    LIB_TRACE.c_pml_helper(
+        dtype.as_c_float_p(tomo),
+        dtype.as_c_int(args[0]),  # dx
+        dtype.as_c_int(args[1]),  # dy
+        dtype.as_c_int(args[2]),  # dz
+        dtype.as_c_float_p(args[3]),  # center
+        dtype.as_c_float_p(args[4]),  # theta
+        dtype.as_c_float_p(recon),
+        dtype.as_c_int(args[5]['num_gridx']),
+        dtype.as_c_int(args[5]['num_gridy']),
+        dtype.as_c_int(args[5]['num_iter']),
+        dtype.as_c_int(args[6]),  # istart
+        dtype.as_c_int(args[7]),  # iend
+        ctypes.c_float(beta),   # beta
+        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads

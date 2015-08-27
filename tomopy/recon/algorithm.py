@@ -204,6 +204,9 @@ def recon(
         'pml_hybrid': ['num_gridx', 'num_gridy', 'num_iter', 'reg_par'],
         'pml_quad': ['num_gridx', 'num_gridy', 'num_iter', 'reg_par'],
         'sirt': ['num_gridx', 'num_gridy', 'num_iter'],
+        'trace_sirt': ['num_gridx', 'num_gridy', 'num_iter'],
+        'trace_mlem': ['num_gridx', 'num_gridy', 'num_iter'],
+        'trace_pml': ['num_gridx', 'num_gridy', 'num_iter'],
     }
 
     generic_kwargs = ['num_gridx', 'num_gridy', 'options']
@@ -282,6 +285,12 @@ def _get_func(algorithm):
         func = extern.c_pml_quad
     elif algorithm == 'sirt':
         func = extern.c_sirt
+    elif algorithm == 'trace_sirt':
+        func = extern.c_trace_sirt
+    elif algorithm == 'trace_mlem':
+        func = extern.c_trace_mlem
+    elif algorithm == 'trace_pml':
+        func = extern.c_trace_pml
     else:
         func = algorithm
     return func
