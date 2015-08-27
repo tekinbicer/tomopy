@@ -4,9 +4,9 @@ CC = icc
 # Directories
 ROOTDIR = ..
 # DISP Framework src dir
-DISPDIR = ${ROOTDIR}/DISP/src/core/
+DISPDIR = ${ROOTDIR}/DISP
 # Bin directory
-BINDIR = ${ROOTDIR}/bin/
+BINDIR = ${ROOTDIR}/bin
 
 # Flags
 CFLAGS = -std=c++11 -fPIC -DAFFINITY_OFF -g -O3 -Wall -Wextra 
