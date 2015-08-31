@@ -1,6 +1,18 @@
 import time
 import numpy as np
 import os, sys, inspect
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Trace-Tomo')
+parser.add_argument('-i', '--input', help='Input file', required=True, type=str)
+parser.add_argument('-o', '--output', help='Output file', required=True, type=str)
+parser.add_argument('-r', '--algorithm', help='Reconstruction algorithm', required=True, type=str)
+parser.add_argument('-nt', '--nthreads', help='Number of threads', default=1, type=int)
+parser.add_argument('-np', '--ncores', help='Number of processes', default=1, type=int)
+parser.add_argument('-it', '--iter', help='Number of iterations', default=1, type=int)
+args = parser.parse_args()
+
 # realpath() will make your script run, even if you symlink it :)
 cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
 if cmd_folder not in sys.path:
@@ -13,14 +25,14 @@ if cmd_subfolder not in sys.path:
 
 import tomopy
 
-fname = "/home1/03034/bicer/data/13id1_fixed_64s.h5"
+fname = args.input #"/home1/03034/bicer/data/13id1_fixed_64s.h5"
 data = tomopy.read_hdf5(fname, group='/exchange/data')[:, :, :]
 theta = tomopy.read_hdf5(fname, group='/exchange/theta')
 print data.shape, theta.shape, data.max(), data.min(), data.dtype
 
 t = time.time()
-rec = tomopy.recon(data, theta*np.pi/180, algorithm='trace_sirt', num_iter=2, ncore=2)
+rec = tomopy.recon(data, theta*np.pi/180, algorithm=args.algorithm, num_iter=args.iter, ncore=args.ncores, nthreads=args.nthreads)
 print time.time()-t
 
 print rec.shape 
-tomopy.write_hdf5(rec, fname='13id_trace_sirt.h5', gname='recon')
+tomopy.write_hdf5(rec, fname=args.output, gname='recon')

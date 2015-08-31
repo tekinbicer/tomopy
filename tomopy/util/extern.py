@@ -105,7 +105,6 @@ def c_shared_lib(lib_name):
 
 LIB_TOMOPY = c_shared_lib('libtomopy')
 LIB_TRACE = c_shared_lib('libtracetomo')
-trace_num_threads = np.intc(16)
 
 
 def c_normalize_bg(dx, dy, dz, air, istart, iend):
@@ -391,6 +390,8 @@ def c_trace_sirt(*args):
     tomo = mproc.SHARED_TOMO
     recon = mproc.SHARED_ARRAY
 
+    print(args)
+
     #LIB_TRACE.c_sirt_helper.restype = ctypes.c_int()
     LIB_TRACE.c_sirt_helper(
         dtype.as_c_float_p(tomo),
@@ -405,7 +406,7 @@ def c_trace_sirt(*args):
         dtype.as_c_int(args[5]['num_iter']),
         dtype.as_c_int(args[6]),  # istart
         dtype.as_c_int(args[7]),  # iend
-        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads
+        dtype.as_c_int(args[5]['nthreads']))  # Number of in-slice threads
 
 def c_trace_mlem(*args):
     tomo = mproc.SHARED_TOMO
@@ -426,7 +427,7 @@ def c_trace_mlem(*args):
         dtype.as_c_int(args[5]['num_iter']),
         dtype.as_c_int(args[6]),  # istart
         dtype.as_c_int(args[7]),  # iend
-        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads
+        dtype.as_c_int(args[5]['nthreads']))  # Number of in-slice threads
 
 def c_trace_pml(*args):
     tomo = mproc.SHARED_TOMO
@@ -449,4 +450,4 @@ def c_trace_pml(*args):
         dtype.as_c_int(args[6]),  # istart
         dtype.as_c_int(args[7]),  # iend
         ctypes.c_float(beta),   # beta
-        dtype.as_c_int(trace_num_threads))  # Number of in-slice threads
+        dtype.as_c_int(args[5]['nthreads']))  # Number of in-slice threads

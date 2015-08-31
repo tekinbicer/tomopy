@@ -204,9 +204,9 @@ def recon(
         'pml_hybrid': ['num_gridx', 'num_gridy', 'num_iter', 'reg_par'],
         'pml_quad': ['num_gridx', 'num_gridy', 'num_iter', 'reg_par'],
         'sirt': ['num_gridx', 'num_gridy', 'num_iter'],
-        'trace_sirt': ['num_gridx', 'num_gridy', 'num_iter'],
-        'trace_mlem': ['num_gridx', 'num_gridy', 'num_iter'],
-        'trace_pml': ['num_gridx', 'num_gridy', 'num_iter'],
+        'trace_sirt': ['num_gridx', 'num_gridy', 'num_iter', 'nthreads'],
+        'trace_mlem': ['num_gridx', 'num_gridy', 'num_iter', 'nthreads'],
+        'trace_pml': ['num_gridx', 'num_gridy', 'num_iter', 'nthreads'],
     }
 
     generic_kwargs = ['num_gridx', 'num_gridy', 'options']
@@ -326,4 +326,5 @@ def _get_algorithm_kwargs(shape):
         'num_block': dtype.as_int32(1),
         'ind_block': np.arange(0, dx, dtype='float32'),
         'options': {},
+        'nthreads': dtype.as_int32(1),
     }
