@@ -8,7 +8,6 @@ parser = argparse.ArgumentParser(description='Trace-Tomo')
 parser.add_argument('-i', '--input', help='Input file', required=True, type=str)
 parser.add_argument('-o', '--output', help='Output file', required=True, type=str)
 parser.add_argument('-r', '--algorithm', help='Reconstruction algorithm', required=True, type=str)
-parser.add_argument('-nt', '--nthreads', help='Number of threads', default=1, type=int)
 parser.add_argument('-np', '--ncores', help='Number of processes', default=1, type=int)
 parser.add_argument('-it', '--iter', help='Number of iterations', default=1, type=int)
 parser.add_argument('-c', '--center', help='Center w.r.t columns', type=float)
@@ -34,8 +33,8 @@ theta = tomopy.read_hdf5(fname, group='/exchange/theta')
 
 t_tmp = time.time()
 theta = theta*np.pi/180
-rec = tomopy.recon(data, theta, algorithm=args.algorithm, num_iter=args.iter, ncore=args.ncores, nthreads=args.nthreads)
+rec = tomopy.recon(data, theta, algorithm=args.algorithm, num_iter=args.iter, ncore=args.ncores)
 t_recon = time.time()-t_tmp
 
 tomopy.write_hdf5(rec, fname=args.output, gname='recon')
-print args.ncores, ':', args.nthreads, ':', time.time()-t_total, ':', t_recon 
+print 'tomo:', args.ncores, ':', time.time()-t_total, ':', t_recon 

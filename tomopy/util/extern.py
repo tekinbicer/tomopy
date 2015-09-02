@@ -390,8 +390,6 @@ def c_trace_sirt(*args):
     tomo = mproc.SHARED_TOMO
     recon = mproc.SHARED_ARRAY
 
-    print(args)
-
     #LIB_TRACE.c_sirt_helper.restype = ctypes.c_int()
     LIB_TRACE.c_sirt_helper(
         dtype.as_c_float_p(tomo),
